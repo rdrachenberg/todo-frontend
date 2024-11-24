@@ -36,7 +36,13 @@ npm run dev
 The development server will start at `http://localhost:3000`.  Open this URL in your browser to access the application.
 
 ## How It Works
-- The frontend makes HTTP requests (GET, POST, PUT, DELETE) to the backend server at the specified `API_URL`.
+- The frontend makes HTTP requests (GET, POST, PUT, DELETE) to the backend server at `http://localhost:8080/tasks` endpoints.
+    - This can be edited in the /src/app/utils/api.tsx file.
+- Routes
+    - GET /tasks
+    - POST /tasks
+    - PUT /tasks/:id
+    - DELETE /tasks/:id
 - All task-related data is managed by the backend and retrieved through API calls.
 
 ## Project Structure
