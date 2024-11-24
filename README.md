@@ -1,6 +1,6 @@
-# ToDo Frontend Application
+# Todo Frontend Application
 
-**ToDo Frontend Application**, a user-friendly interface built with **Next.js** for managing tasks. This frontend communicates with an existing **Express.js** backend server through RESTful API calls.
+A user-friendly interface built with **Next.js** for managing tasks. This frontend communicates with an existing **Express.js** backend server through RESTful API calls.
 
 ## Features
 - Built with **Next.js** for performance and modern web development practices.
@@ -10,7 +10,7 @@
 
 ## Prerequisites
 Before setting up the frontend, ensure:
-- The **Express.js** backend server is up and running. (Refer to its repository for setup instructions.)
+- The **Express.js** backend server is up and running (refer to its repository for setup instructions).
 - The backend server's API is accessible via a base URL.
 
 ## Getting Started
@@ -33,7 +33,7 @@ Run the following command to start the frontend application:
 npm run dev
 ```
 
-The development server will start at `http://localhost:3000`. Open this URL in your browser to access the application.
+The development server will start at `http://localhost:3000`.  Open this URL in your browser to access the application.
 
 ## How It Works
 - The frontend makes HTTP requests (GET, POST, PUT, DELETE) to the backend server at the specified `API_URL`.
@@ -54,7 +54,7 @@ The development server will start at `http://localhost:3000`. Open this URL in y
 - `npm run lint`: Lint the codebase for issues.
 
 ## Troubleshooting
-1. **Connection Issues:** Verify the backend API endpoint is reachable from the frontend.
+ * **Connection Issues:** Verify the backend API endpoint is reachable from the frontend.
 
 ## Contributing
 We welcome contributions! Feel free to fork the repository, create issues, or submit pull requests.
