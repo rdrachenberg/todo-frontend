@@ -10,7 +10,7 @@ A user-friendly interface built with **Next.js** for managing tasks. This fronte
 
 ## Prerequisites
 Before setting up the frontend, ensure:
-- The **Express.js** backend server is up and running (refer to its repository for setup instructions).
+- The **Express.js** backend server is up and running [refer to its repository for setup instructions](https://github.com/rdrachenberg/todo-backend]).
 - The backend server's API is accessible via a base URL.
 
 ## Getting Started
