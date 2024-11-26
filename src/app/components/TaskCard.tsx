@@ -1,110 +1,105 @@
-'use client'; // Using client component for client-side rendering
-import { ImageProps, TaskCardProps } from '../types'; // Import type definitions for props
-import Image from 'next/image'; // Import Next.js Image component
-import { useState } from 'react'; // Import React hook for managing state
-import api from '../utils/api'; // Import API utility for HTTP requests
-import { useRouter, useSearchParams } from 'next/navigation'; // Import hooks for navigation and URL search parameters
-import Modal from './Modal'; // Import Modal component
+'use client'; // for nextjs client-side rendering
 
-// Component to display an image with specific props
+import { ImageProps, TaskCardProps } from '../types'; // Import type definitions for props
+import Image from 'next/image'; // Import Next.js Image component for optimized images
+import { useState } from 'react'; // Import React state management
+import api from '../utils/api'; // Import Axios instance for API requests
+import { useRouter } from 'next/navigation'; // Import Next.js router for navigation
+import Modal from './Modal'; // Import Modal component
+import { useTasks } from '../context/TasksContext'; // Import tasks context hook
+
+// Reusable NotificationImage component for displaying icons
 const NotificationImage: React.FC<ImageProps> = ({ src, alt, className }) => (
     <Image
-        width={24} // Set the width of the image
-        height={24} // Set the height of the image
-        loading="lazy" // Lazy-load the image
+        width={24} // Set image width
+        height={24} // Set image height
+        loading="lazy" // Lazy load the image
         src={src} // Source of the image
-        alt={alt} // Alt text for the image
-        className={`object-contain shrink-0 w-[24px] aspect-square ${className || ''}`} // Apply default and additional styles
+        alt={alt} // Alternative text for accessibility
+        className={`object-contain shrink-0 w-[24px] aspect-square ${className || ''}`} // Apply additional classes if provided
     />
 );
 
-// TaskCard component to display an individual task
+// TaskCard component for rendering individual tasks
 const TaskCard: React.FC<TaskCardProps> = ({ message, startIcon, endIcon, id, completed }) => {
-    const [isChecked, setIsChecked] = useState<boolean>(completed); // State to track if the task is completed
-    const [show, setShow] = useState<boolean>(false); // State to control the visibility of the modal
-    const searchParams = useSearchParams(); // Access current URL search parameters
-    const router = useRouter(); // Initialize the router for navigation
+    const [isChecked, setIsChecked] = useState<boolean>(completed); // State for tracking task completion
+    const [show, setShow] = useState<boolean>(false); // State for modal visibility
+    const router = useRouter(); // Initialize Next.js router
+    const { tasks, setTasks } = useTasks(); // Access tasks context
 
-    // Function to toggle the modal visibility
-    const handleModalToggle = () => {
-        setShow(!show);
-    };
+    // Function to sort tasks by completion status and creation date
+    const sortTasks = (tasks: any[]) =>
+        tasks
+            .sort((a, b) => b.createdAt - a.createdAt) // Sort by creation date (descending)
+            .sort((a, b) => a.completed - b.completed); // Then by completion status
 
-    // Function to toggle the completion status of a task
+    // Toggle modal visibility
+    const handleModalToggle = () => setShow((prev) => !prev);
+
+    // Toggle task completion status and update the tasks context
     const handleCheckClick = async () => {
-        setIsChecked(!isChecked); // Update local state
-        console.log('id: ', id);
-        const res = await api.put(`/${id}`, { completed: !completed }); // Send update request to the server
-        console.log(res);
-        if (res.statusText === "OK") { // Confirm the update was successful
-            console.log('Record updated successfully');
-            router.refresh(); // Refresh the page
-            window.location.replace('/'); // Redirect to the homepage
+        const updatedStatus = !isChecked; // Toggle the current status
+        setIsChecked(updatedStatus); // Update local state
+
+        try {
+            const response = await api.put(`/${id}`, { completed: updatedStatus }); // Send API request to update the task
+
+            if (response.status === 200) {
+                console.log('Record updated successfully');
+                // Update the task in the context and re-sort
+                const updatedTasks = tasks.map((task) =>
+                    task?.id === id ? { ...task, completed: updatedStatus } : task
+                );
+                setTasks(sortTasks(updatedTasks)); // Update the context with sorted tasks
+            }
+        } catch (error) {
+            console.error('Failed to update task:', error); // Log errors if the update fails
         }
     };
 
-    // Function to handle task deletion
-    const handleDeleteClick = async () => {
-        console.log('Delete was clicked. Need to open modal for DELETE');
-        router.push(`/?id=${id}&show=true`); // Update the URL to include query params for the modal
-        setShow(true); // Display the modal
+    // Handle task deletion and open the modal
+    const handleDeleteClick = () => {
+        router.push(`/?id=${id}&show=true`); // Update the URL with task ID
+        setShow(true); // Show the modal
     };
+
+    // Render task card content based on completion status
+    const renderTaskContent = () => (
+        <article
+            className={`flex flex-wrap gap-3 items-start p-4 h-full rounded-lg border shadow-sm bg-neutral-800 w-[736px] max-md:max-w-full ${
+                isChecked ? 'border-neutral-800 text-zinc-500' : 'border-zinc-800 text-zinc-100'
+            }`}
+        >
+            {/* Checkbox for marking task completion */}
+            <div onClick={handleCheckClick}>
+                <NotificationImage
+                    src={isChecked ? '/checked.png' : startIcon} // Use different icons based on completion
+                    alt={isChecked ? 'Task completed' : 'Mark task as completed'}
+                    className={isChecked ? 'w-6 outline outline-4 -outline-offset-4 outline-violet-600 rounded-full' : ''} // Highlight completed tasks
+                />
+            </div>
+            {/* Task message */}
+            <div
+                className="flex-1 shrink basis-0 max-md:max-w-full"
+                onClick={() => router.push(`/detail/${id}?id=${id}`)} // Navigate to task details
+            >
+                <p className={`flex-1 shrink basis-0 ${isChecked ? 'line-through' : ''}`}>{message}</p>
+            </div>
+            {/* Delete button */}
+            <div className="hover:bg-red-700 rounded-full" onClick={handleDeleteClick}>
+                <NotificationImage src={endIcon} alt="Delete task" />
+            </div>
+        </article>
+    );
 
     return (
         <div>
-            {/* Render the task as incomplete or completed based on isChecked */}
-            {!isChecked ? (
-                <section className="flex text-sm leading-5 text-zinc-100" role="alert">
-                    <article className="flex flex-wrap gap-3 items-start p-4 h-full rounded-lg border border-solid shadow-sm bg-neutral-800 border-zinc-800 w-[736px] max-md:max-w-full">
-                        <div onClick={handleCheckClick}>
-                            <NotificationImage
-                                src={startIcon}
-                                alt="Notification start icon"
-                            />
-                        </div>
-                        <div className='flex-1 shrink basis-0 max-md:max-w-full' onClick={() => router.push(`/detail/${id}?id=${id}`)}>
-                            <p className="flex-1 shrink basis-0">
-                                {message}
-                            </p>
-                        </div>
-                        <div className='hover:bg-red-700 rounded-full' onClick={handleDeleteClick}>
-                            <NotificationImage
-                                src={endIcon}
-                                alt="Notification action"
-                            />
-                        </div>
-                    </article>
-                </section>
-            ) : (
-                <section
-                    role="alert"
-                    aria-live="polite"
-                    className="flex text-sm leading-5 text-zinc-500"
-                >
-                    <article className="flex flex-wrap gap-3 items-start p-4 h-full rounded-lg border border-solid bg-neutral-800 border-neutral-800 w-[736px] max-md:max-w-full">
-                        <div onClick={handleCheckClick}>
-                            <NotificationImage
-                                src={'/checked.png'}
-                                alt="Notification start indicator"
-                                className='w-6 outline outline-4 -outline-offset-4 outline-violet-600 rounded-full'
-                            />
-                        </div>
-                        <p className={`flex-1 shrink basis-0 max-md:max-w-full ${isChecked ? "line-through" : ''}`}>
-                            {message}
-                        </p>
-                        <div className='hover:bg-red-700 rounded-full' onClick={handleDeleteClick}>
-                            <NotificationImage
-                                src={endIcon}
-                                alt="Notification action"
-                            />
-                        </div>
-                    </article>
-                </section>
-            )}
-            {/* Display the modal if the show state is true */}
-            <div>
-                {show && <Modal handleModalToggle={handleModalToggle} />}
-            </div>
+            {/* Task card section */}
+            <section role="alert" aria-live="polite" className="flex text-sm leading-5">
+                {renderTaskContent()}
+            </section>
+            {/* Render modal if visible */}
+            {show && <Modal handleModalToggle={handleModalToggle} />}
         </div>
     );
 };

@@ -17,9 +17,11 @@ export interface EmptyTasksProps {
 
 // Props for the ColorButton component
 export interface ColorButtonProps {
-  color: string; // Color of the button
-  onClick: () => void; // Function to handle button click
+  color: string; // The color value for the button (e.g., hex code)
+  onClick: () => void; // The handler function to execute when the button is clicked
+  isSelected?: boolean; // Optional: Indicates if this color is currently selected
 }
+
 
 // Props for the TaskInput component
 export interface TaskInputProps {
@@ -35,9 +37,10 @@ export interface AddTaskButtonProps {
 
 // Props for the SaveButton component
 export interface SaveButtonProps {
-  onClick: () => void; // Function to handle button click
+  onClick: React.MouseEventHandler<HTMLButtonElement>; // Handler function for when the button is clicked
   isDisabled?: boolean; // Optional flag to disable the button
 }
+
 
 // Props for images used in components
 export interface ImageProps {
@@ -61,14 +64,23 @@ export interface TaskCardProps {
 // Context type for managing tasks
 export interface TaskContextType {
   tasks: Tasks[]; // Array of tasks
-  setTasks: (event: React.ChangeEvent) => void; // Function to update the tasks
+  setTasks: React.Dispatch<React.SetStateAction<Tasks[]>>; // Function to update the tasks
+  totalCount: number | null; // Array.length to hold number of tasks
+  setTotalCount: React.Dispatch<React.SetStateAction<number>>; // Function to update the tasks
+  
 }
 
 // Structure of a task object
 export interface Tasks {
-  data: {
+      id: number;
       title: string; // Title of the task
       color: string; // Color associated with the task
       completed: boolean; // Flag to indicate if the task is completed
-  };
+  
+}
+
+export interface LoaderProps {
+  loading: boolean; // Whether the loader should be displayed
+  size?: number; // Size of the loader (width and height)
+  color?: string; // Color of the loader
 }
