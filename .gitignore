@@ -23,3 +23,6 @@ pids/
 
 # Keep environment variables out of version control
 .env
+
+# Exclude next folder
+.next
