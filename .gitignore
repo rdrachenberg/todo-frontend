@@ -26,3 +26,4 @@ pids/
 
 # Exclude next folder
 .next
+.vercel
