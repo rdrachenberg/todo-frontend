@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "concurrently \"next start\" \"npm run start_server\"",
     "lint": "next lint",
-    "start_server": "npx prisma generate && npx prisma db push && npm run seed && node src/index.js",
+    "start_server": "npx prisma generate && npx prisma db push && npm run seed && node index.js",
     "seed": "node prisma/seed.js"
   },
   "dependencies": {
