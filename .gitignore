@@ -25,4 +25,5 @@ pids/
 .env
 
 # Exclude next folder
-
+.next
+.vercel
