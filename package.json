@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"next dev\" \"cd ./backend && npm start\"",
-    "build": "next build",
+    "build": "concurrently \"next build\" \"cd ./backend && npm start\"",
     "start": "concurrently \"next start\" \"cd ./backend && npm start\"",
     "lint": "next lint"
   },
