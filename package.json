@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"npm start\"",
+    "dev": "concurrently \"next dev\" \"npm run start_server\"",
     "build": "next build",
     "start": "concurrently \"next start\" \"npm run start_server\"",
     "lint": "next lint",
-    "start_server": "npx prisma generate && npx prisma db push && npm run seed && node src/backend/src/index.js",
+    "start_server": "npx prisma generate && npx prisma db push && npm run seed && node src/index.js",
     "seed": "node prisma/seed.js"
   },
   "dependencies": {
