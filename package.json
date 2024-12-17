@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"cd ./src/backend && npm start\"",
+    "dev": "concurrently \"next dev\" \"npm start\"",
     "build": "next build",
-    "start": "concurrently \"next start\" \"cd ./backend && npm start\"",
-    "lint": "next lint"
+    "start": "concurrently \"next start\" \"npm run start_server\"",
+    "lint": "next lint",
+    "start_server": "npx prisma generate && npx prisma db push && npm run seed && node src/backend/src/index.js",
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
